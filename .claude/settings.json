@@ -1,0 +1,6 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "node \"C:/Users/Emilia/Documents/PlatformIO/Projects/audiometr/.claude/statusline.js\""
+  }
+}
