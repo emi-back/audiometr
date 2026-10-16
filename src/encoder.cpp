@@ -41,8 +41,7 @@ void encoder_init() {
   attachInterrupt(digitalPinToInterrupt(ENC_DB_B), encoder_db_callback, CHANGE);
 }
 
-// Enkoder mechaniczny zwykle daje 4 przejścia kwadraturowe na jedno "kliknięcie" (detent) —
-// dzielimy przez 4, resztę zachowujemy do następnego odczytu, żeby nie gubić kroków.
+
 int encoder_readHzDelta() {
   noInterrupts();
   int16_t raw = hzStep;

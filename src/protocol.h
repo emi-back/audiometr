@@ -15,5 +15,5 @@ typedef void (*IntensityChangedCallback)(int currentDb);
 // Zwraca wyznaczony próg w dB HL.
 int protocol_hughsonWestlake(volatile AudiometerData *audioData, IntensityChangedCallback onIntensityChanged);
 
-// Wypisuje komplet wyników (oba uszy) na Serial, do odbioru przez aplikację na PC
-void protocol_sendDataToPC(int responses[FREQ_TABLE_SIZE][3][2]);
+// Wypisuje finalne progi słyszenia (oba uszy) na Serial w formacie CSV, do odbioru przez aplikację na PC
+void protocol_sendDataToPC(int finalThresholds[FREQ_TABLE_SIZE][2]);

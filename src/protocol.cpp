@@ -4,6 +4,7 @@
 #include "buttons.h"
 
 const uint16_t freqTable[FREQ_TABLE_SIZE] = {1000, 2000, 3000, 4000, 8000, 1000, 250, 500};
+const uint8_t refAttenuationTable[FREQ_TABLE_SIZE] = {67, 73, 78, 77, 56, 67, 55, 64};
 
 void protocol_wait2to4sec() {
   unsigned long durationMs = random(2000, 4001);
@@ -17,7 +18,7 @@ void protocol_setFrequencyIndex(volatile AudiometerData *audioData, int index) {
 }
 
 int protocol_hughsonWestlake(volatile AudiometerData *audioData, IntensityChangedCallback onIntensityChanged) {
-  volume_setDb(audioData, 50);
+  volume_setDb(audioData, 30);
   if (onIntensityChanged) onIntensityChanged(audioData->intensity);
 
   // 1. Ściszanie (-10 dB) gdy pacjent reaguje
@@ -26,7 +27,7 @@ int protocol_hughsonWestlake(volatile AudiometerData *audioData, IntensityChange
     buttonPatientPressed = false;
 
     audio_generateTone(audioData);
-    delay(1000);
+    delay(400);
 
     if (buttonPatientPressed) {
       buttonPatientPressed = false;
@@ -54,20 +55,14 @@ int protocol_hughsonWestlake(volatile AudiometerData *audioData, IntensityChange
   }
 }
 
-void protocol_sendDataToPC(int responses[FREQ_TABLE_SIZE][3][2]) {
-  Serial.println("\n=======================================================");
-  Serial.println("=== WYSYŁANIE KOMPLETU DANYCH (OBA USZY) DO PC ===");
-  Serial.println("=======================================================");
-
+void protocol_sendDataToPC(int finalThresholds[FREQ_TABLE_SIZE][2]) {
+  Serial.println("===CSV_START===");
+  Serial.println("ear,frequency_hz,threshold_db");
   for (int ear = 0; ear < 2; ear++) {
-    Serial.printf("\n>>> UCHO %s <<<\n", ear == 0 ? "LEWE" : "PRAWE");
+    const char *earLabel = (ear == 0) ? "L" : "P";
     for (int i = 0; i < FREQ_TABLE_SIZE; i++) {
-      Serial.printf("Częstotliwość: %4d Hz | Próba 1: %2d dB | Próba 2: %2d dB | Próba 3: %2d dB\n",
-                    freqTable[i],
-                    responses[i][0][ear],
-                    responses[i][1][ear],
-                    responses[i][2][ear]);
+      Serial.printf("%s,%d,%d\n", earLabel, freqTable[i], finalThresholds[i][ear]);
     }
   }
-  Serial.println("=======================================================\n");
+  Serial.println("===CSV_END===");
 }

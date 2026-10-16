@@ -1,9 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-// ==========================================
-// Ekrany UI
-// ==========================================
+
 enum ScreenState {
   SCREEN_1_START = 1,
   SCREEN_2_IN_PROGRESS,

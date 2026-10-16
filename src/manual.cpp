@@ -17,10 +17,10 @@ static int nextNotDoneIndex(bool freqDone[], int fromIndex, int direction) {
 }
 
 // Wybiera nową częstotliwość: ustawia fazę generatora (jak protokół półautomatyczny),
-// resetuje natężenie do domyślnych 50 dB HL i czyści licznik prób dla tej częstotliwości.
+// resetuje natężenie do domyślnych 40 dB HL i czyści licznik prób dla tej częstotliwości.
 static void selectFrequency(volatile AudiometerData *audioData, int newIndex) {
   protocol_setFrequencyIndex(audioData, newIndex);
-  volume_setDb(audioData, 50);
+  volume_setDb(audioData, 30);
   audioData->responseCount = 0;
 
   display_setFrequency(freqTable[newIndex]);
@@ -141,6 +141,9 @@ void manual_runTest(volatile AudiometerData *audioData, IntensityChangedCallback
 
         delay(20);
       }
+
+      // CSV wysyłany do PC czyta finalThresholds (tak jak w trybie półautomatycznym)
+      finalThresholds[audioData->freqIndex][audioData->currentEar] = finalThreshold;
 
       freqDone[audioData->freqIndex] = true;
       doneCount++;

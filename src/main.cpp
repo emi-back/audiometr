@@ -12,9 +12,10 @@
 DeviceState currentState = STATE_POWER_ON;
 
 volatile AudiometerData audioData;
-volatile MenuNavigation menuData; // zarezerwowane na przyszłość (np. tryb manualny)
+volatile MenuNavigation menuData; 
 
 int toSendResponses[FREQ_TABLE_SIZE][3][2] = {0};
+int finalThresholds[FREQ_TABLE_SIZE][2] = {0};
 
 // Wywoływane przez protocol_hughsonWestlake() za każdym razem, gdy zmienia się głośność,
 // żeby ekran SCREEN_2_IN_PROGRESS pokazywał aktualną wartość dB na żywo.
@@ -148,6 +149,8 @@ void loop() {
             }
           }
 
+          finalThresholds[l][m] = finalThreshold;
+
           // Ekran: pomiar dla tej częstotliwości zakończony, czekamy na OK
           display_showScreen(SCREEN_3_SEMI_FREQ_DONE);
 
@@ -168,7 +171,7 @@ void loop() {
 
     case STATE_FINISHED:
       Serial.println("=== TEST ZAKOŃCZONY ===");
-      protocol_sendDataToPC(toSendResponses);
+      protocol_sendDataToPC(finalThresholds);
 
       Serial.println("Naciśnij OK, aby wrócić do wyboru trybu...");
       buttonOKPressed = false;

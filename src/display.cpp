@@ -365,9 +365,6 @@ void display_render() {
   }
 }
 
-// ==========================================
-// API publiczne
-// ==========================================
 void display_init() {
   pinMode(TFT_CS_PIN,  OUTPUT);
   pinMode(TFT_DC_PIN,  OUTPUT);
@@ -375,7 +372,7 @@ void display_init() {
   pinMode(TFT_BL_PIN,  OUTPUT);
 
   digitalWrite(TFT_CS_PIN, HIGH);
-  digitalWrite(TFT_BL_PIN, LOW); // Włączenie podświetlenia
+  digitalWrite(TFT_BL_PIN, LOW); 
 
   SPI.begin(TFT_SCL_PIN, TFT_MISO_PIN, TFT_SDA_PIN, TFT_CS_PIN);
   SPI.beginTransaction(SPISettings(14000000, MSBFIRST, SPI_MODE3));

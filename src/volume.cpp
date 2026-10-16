@@ -76,11 +76,17 @@ void volume_init() {
 }
 
 void volume_setDb(volatile AudiometerData *audioData, int targetDb) {
-  if (targetDb < 0) targetDb = 0;
-  if (targetDb > 70) targetDb = 70;
+  int rawMaxDb = refAttenuationTable[audioData->freqIndex];
+  // Granice obcinamy do wielokrotności 5 dB w stronę zera, nawet kosztem zakresu na obu końcach — żeby
+  // kroki po 5/10 dB zawsze trafiały w wielokrotność 5.
+  int maxDb = (rawMaxDb / 5) * 5;
+  int minDb = ((maxDb - 79) / 5) * 5;
+
+  if (targetDb < minDb) targetDb = minDb;
+  if (targetDb > maxDb) targetDb = maxDb;
 
   audioData->intensity = targetDb;
-  uint8_t attenuation = 70 - targetDb;
+  uint8_t attenuation = maxDb - targetDb;
 
   pt2258_set_channel_attenuation(1, attenuation);
   pt2258_set_channel_attenuation(2, attenuation);
